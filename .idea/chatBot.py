@@ -30,7 +30,7 @@ intents = json.loads(open('intents.json').read())
 
 words = pickle.load(open('words.pkl', 'rb'))
 classes = pickle.load(open('classes.pkl', 'rb'))
-model = load_model('chatbot_model.h7')
+model = load_model('chatbot_model.h5')
 # ---------- Manual methods
 
 class Gui(customtkinter.CTk):
@@ -70,20 +70,23 @@ def generateSpongeBob():
     filepath = "SpongeBobS1&S2.txt"
     option3 = False
     # NeuralNetwork Model for SpongeBob
-    model2 = tf.keras.models.load_model('textgeneratorV2_SpongeBob.model')
+    model2 = tf.keras.layers.TFSMLayer(
+        "textgeneratorV2_SpongeBob.model",
+        call_endpoint="serving_default"
+    )
     print("Reading: SpongeBobS1&S2.txt")
 
-    text = open(filepath, 'rb').read().decode(encoding='utf-8').lower() #We change everything to lowercase but we don't make use of the uppercases
+    text = open(filepath, 'rb').read().decode(encoding='utf-8').lower() # Change everything to lowercase, we don't make use of the uppercases
     text = text[1000:100000]
 
     characters = sorted(set(text))
     char_to_index = dict((c, i) for i, c in enumerate(characters))
     index_to_char = dict((i, c) for i, c in enumerate(characters))
 
-    SEQ_LENGTH = 40 #Size of the sequence
-    STEP_SIZE = 3 #How many characters we gonna shift to the next sentence
-    length = 300 #LengthOfText to generate.
-    temperature = 2 #Temperature of generated text
+    SEQ_LENGTH = 40 # Size of the sequence
+    STEP_SIZE = 3 # Amount of characters we will shift to the next sentence
+    length = 300 # LengthOfText to generate
+    temperature = 2 # Temperature of generated text
 
     # GENERATION OF TEXT --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -98,7 +101,7 @@ def generateSpongeBob():
             x[0, t, char_to_index[character]] = 1
 
     #So we get the predictions fron the model and we put these predictions into the sample function for the next index.
-        predictions = model2.predict(x, verbose=0)[0]
+        predictions = model2(x)[0]
         next_index = sample(predictions, temperature)
         next_character = index_to_char[next_index]
 
@@ -131,7 +134,7 @@ def predict_class(sentence):
     bag = bag_of_words(sentence)
     res = model.predict(np.array([bag]))[0]
     print(res)
-    ERROR_THRESHOLD = 0.25 #We're using softmax 30:20 he explains
+    ERROR_THRESHOLD = 0.25 #Using softmax
     result = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
 
     result.sort(key=lambda x: x[1], reverse=True)
@@ -169,13 +172,17 @@ def generate_text(length, temperature):
     sentence = text[start_index: start_index + SEQ_LENGTH] #So we take only the start_index from the (start_index + SEQ_LENGTH)
     generated += sentence #Add the text to generated
     for i in range(length):
-        #So like how we did in the LSTM, we just index each an every character.
+
+        #Like how we did in the LSTM, we just index each an every character.
         x = np.zeros((1, SEQ_LENGTH, len(characters)))
         for t, character in enumerate(sentence):
             x[0, t, char_to_index[character]] = 1
 
-        #So we get the predictions fron the model and we put these predictions into the sample function for the next index.
-        predictions = model2.predict(x, verbose=0)[0]
+        #Get the predictions from model and put predictions into the sample function for the next index.
+
+        output = model2(x)
+        predictions = list(output.values())[0][0]
+
         next_index = sample(predictions, temperature)
         next_character = index_to_char[next_index]
 
@@ -227,7 +234,10 @@ while True:
                 # Generation for Shakespeare
                 filepath = tf.keras.utils.get_file('shakespeare.txt', 'https://storage.googleapis.com/download.tensorflow.org/data/shakespeare.txt')
                 # NeuralNetwork Model for SpongeBob
-                model2 = tf.keras.models.load_model('textgeneratorV4.model')
+                model2 = tf.keras.layers.TFSMLayer(
+                    "textgeneratorV4.model",
+                    call_endpoint="serving_default"
+                )
                 if option3 == False:
                     left = 100
                     right = 100000
@@ -238,7 +248,10 @@ while True:
                 # generateSpongebob
                 filepath = "SpongeBobS1&S2.txt"
                 # NeuralNetwork Model for SpongeBob
-                model2 = tf.keras.models.load_model('textgeneratorV2_SpongeBob.model')
+                model2 = tf.keras.layers.TFSMLayer(
+                    "textgeneratorV2_SpongeBob.model",
+                    call_endpoint="serving_default"
+                )
                 if option3 == False:
                     left = 1000
                     right = 100000
@@ -248,8 +261,11 @@ while True:
             elif message == "Simpson":
                 # generateSpongebob
                 filepath = "SimpsonS1-S5.txt"
-                # NeuralNetwork Model for SpongeBob
-                model2 = tf.keras.models.load_model('textgenerator_SimpsonV2')
+                # NeuralNetwork Model for Simpson
+                model2 = tf.keras.layers.TFSMLayer(
+                    "textgenerator_SimpsonV2",
+                    call_endpoint="serving_default"
+                )
                 if option3 == False:
                     left = 2000
                     right = 200000
@@ -359,8 +375,3 @@ while True:
         ints = predict_class(message)
         res = get_response(ints, intents)
         print(res)
-
-# Getting a response
-
-#Chat bot seems to be good at predicing longer sentence things...
-#Performance is eh but it does somewhat work

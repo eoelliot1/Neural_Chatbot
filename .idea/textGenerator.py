@@ -31,7 +31,7 @@ STEP_SIZE = 3 #How many characters we gonna shift to the next sentence
 # We can try below into Training.PY but we need to use the above parameters, it may be a bit problematic though
 # Since the above parameters need to be consistent with the code here and the neural network you'd put elsewhere.
 # # ---------------------------------------------------------------------------------------------------
-# # Prepartion for neural network, might no longer be needed in the code once the neural network is finished
+# # Prepartion for neural network, no longer be needed in the code once the neural network is finished
 # # So remember to comment out once ur done
 #
 # sentences = []
@@ -92,7 +92,7 @@ STEP_SIZE = 3 #How many characters we gonna shift to the next sentence
 # # print("Test accuracy:", score[1])
 # #Neural network in video
 #
-# #Once you're done running this, you can actually remove the neural network code and just put down this:
+# #Once you're done running this, you can remove the neural network code and just put down this:
 # ---------------------------------------------------------------------------------------------------
 
 model = tf.keras.models.load_model('textgeneratorV1_SpongeBob.model') #Replace with the model you want to generate.
