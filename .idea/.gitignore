@@ -6,3 +6,11 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+.idea/
+*.mp4
+*.mov
+*.avi
+*.h7
+*.model
+*.pkl
