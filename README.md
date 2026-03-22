@@ -2,12 +2,19 @@
 
 
 ## Project Overview
-This is a chatbot project built using **Python**, **Keras**, and **Tensorflow** that creates a neural network capable of generating it's own story in the style of a given transcript.
-The chatbot is also capable of interpreting text and categorising the text to it's most likely meaning.
+This is a chatbot project built using **Python**, **Keras**, and **TensorFlow** that creates a neural network capable of generating its own story in the style of a given transcript.
+The chatbot is also capable of interpreting text and categorising the text to its most likely meaning.
 
-# Examples:
+
 ## Demo
+SpongeBob generation transcript example:
 <p>
-    <img src="./assets/SpongeBob_Example.gif" width="200">
+    <img src="./.idea/Assets/SpongeBob_Example.gif" length="600" width="700">
 </p>
+
+Simpson generation transcript example:
+<p>
+    <img src="./.idea/Assets/Simpson_Example.gif" length="600" width="700">
+</p>
+
 
